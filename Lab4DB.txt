@@ -1,0 +1,166 @@
+DROP TABLE IF EXISTS Arene;
+CREATE TABLE Arene(
+id_arene INT PRIMARY KEY,
+nume varchar(50) NOT NULL,
+locatie varchar(50) NOT NULL
+)
+
+DROP TABLE IF EXISTS Prezentatori;
+CREATE TABLE Prezentatori(
+id_prez INT PRIMARY KEY,
+nume varchar(50) NOT NULL,
+voce varchar(50) NOT NULL,
+id_arene INT FOREIGN KEY REFERENCES Arene(id_arene)
+on delete cascade
+on update cascade
+)
+
+DROP TABLE IF EXISTS Jucator;
+CREATE TABLE Jucator(
+id_jucator INT PRIMARY KEY,
+nume varchar(50) NOT NULL,
+echipa varchar(50) NOT NULL,
+puteri int,
+arena INT FOREIGN KEY REFERENCES Arene(id_arene)
+on delete cascade
+on update cascade
+)
+
+DROP TABLE IF EXISTS Joc;
+CREATE TABLE Joc(
+id_joc INT PRIMARY KEY ,
+titlu VARCHAR(100) NOT NULL,
+arena INT FOREIGN KEY REFERENCES Arene(id_arene)
+on delete cascade
+on update cascade
+)
+
+DROP TABLE IF EXISTS Arbitrii;
+CREATE TABLE Arbitrii(
+id_arbitru INT PRIMARY KEY ,
+nume varchar(50) NOT NULL,
+prenume varchar(50) NOT NULL,
+prezentator INT FOREIGN KEY REFERENCES Prezentatori(id_prez)
+on delete cascade
+on update cascade
+)
+
+DROP TABLE IF EXISTS RelatieJocJucator;
+CREATE TABLE RelatieJocJucator(
+id_relatie INT PRIMARY KEY ,
+jocul INT FOREIGN KEY REFERENCES Joc(id_joc),
+jucatorul INT FOREIGN KEY REFERENCES Jucator(id_jucator)
+on delete cascade
+on update cascade
+)
+
+INSERT INTO Arene(id_arene,nume, locatie)
+values(1,'SKY','Olympus')
+INSERT INTO Arene(id_arene,nume, locatie)
+values(2,'SKY','Worlds Edge')
+INSERT INTO Arene(id_arene,nume, locatie)
+values(3,'SKY','Kings Kanyon')
+INSERT INTO Arene(id_arene,nume, locatie)
+values(4,'SKY','Olympus')
+
+update Arene
+set nume = 'Storm Point'
+where id_arene = 1
+
+delete from Arene
+where id_arene = 1
+
+update Arene
+set nume = 'S-a facut update'
+where locatie = 'Storm Point' or locatie = 'Olympus'
+
+update Jucator
+set nume = 'numele'
+
+delete from Arene
+where id_arene IS NULL
+
+INSERT INTO Prezentatori(id_prez, nume, voce)
+values(1,'ASH', 'voice1')
+
+INSERT INTO Jucator(id_jucator, nume, echipa, puteri, arena)
+values(1, 'ARDELE', 'TEAM1',2,1)
+
+insert into Jucator(id_jucator,nume,puteri, echipa, arena)
+values(2,'sssssss', 'Team2',3,1)
+
+INSERT INTO Joc(id_joc, titlu, arena)
+values(1,'APEX LEGENDS',1)
+
+INSERT INTO Joc(id_joc, titlu, arena)
+values(2,'APEX LEGENDS',1)
+
+insert into Jucator(id_jucator,nume, echipa, puteri, arena)
+values(3,'ffff','team3',4,1)
+
+insert into Jucator(id_jucator, nume, echipa, puteri, arena)
+values(4,'ggg','team4',2,1)
+
+INSERT INTO Arbitrii(id_arbitru, nume, prenume)
+values(1,'Reitler', 'Alex')
+
+INSERT INTO RelatieJocJucator(id_relatie, jocul, jucatorul)
+values(1,1,1)
+
+select * from Joc
+
+select * from Arene
+
+select * from Jucator
+select * from Joc
+
+--o interogare cu unul din operatorii UNION, INTERSECT, EXCEPT, la alegere;
+select id_arene,nume from Arene 
+union 
+select id_jucator,nume from Jucator
+
+
+--doua interogari cu operatorii INNER JOIN 
+select id_jucator from 
+Jucator inner join
+Arene ON Jucator.id_jucator=Arene.id_arene
+
+--inner join
+select id_relatie, id_joc, id_jucator 
+from RelatieJocJucator 
+inner join Joc 
+ON Joc.id_joc=RelatieJocJucator.id_relatie  
+inner join Jucator
+ON Jucator.id_jucator = RelatieJocJucator.id_relatie
+
+--left join
+select id_jucator 
+from Jucator
+right outer join RelatieJocJucator
+on id_jucator = id_jucator
+--primul este din tabelul jucator si al doilea din tabelul relatie
+
+
+SELECT SUM(id_jucator) as SumaDeID
+FROM Jucator
+WHERE id_jucator = 2 or id_jucator = 4
+GROUP BY id_jucator
+
+SELECT id_joc, MAX(id_joc)
+FROM Joc
+WHERE id_joc = 2 or id_joc = 1
+GROUP BY id_joc
+HAVING MAX(id_joc) = 2
+
+select MAX(id_jucator) as NumarJucatorMaxim
+from Jucator
+WHERE id_jucator > 3
+GROUP BY id_jucator
+
+SELECT MIN(id_arene) as NumarAreneMin
+FROM Arene
+WHERE id_arene = 2 or id_arene = 4
+GROUP BY id_arene
+
+select distinct(arena)
+from Jucator
